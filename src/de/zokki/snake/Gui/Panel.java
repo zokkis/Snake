@@ -2,6 +2,7 @@ package de.zokki.snake.Gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ComponentAdapter;
@@ -21,7 +22,7 @@ public class Panel extends JPanel {
 
     private int width = settings.getWidth();
     private int height = settings.getHeight();
-    
+
     Snake snake = new Snake();
 
     Apple apple = new Apple();
@@ -54,7 +55,7 @@ public class Panel extends JPanel {
 	int dotCount = settings.getDotCount();
 	int width = settings.getWidth();
 	int height = settings.getHeight();
-		
+
 	Image image = createImage(width, height);
 	Graphics imageGraphics = image.getGraphics();
 
@@ -71,10 +72,15 @@ public class Panel extends JPanel {
 
 	graphics.drawImage(image, 0, 0, this);
 	repaint();
-    } 
-    
+    }
+
     public void startGame() {
 	new Thread(snake).start();
-	apple.setApple();
+	EventQueue.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+		apple.setApple();
+	    }
+	});
     }
 }

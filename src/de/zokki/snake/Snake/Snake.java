@@ -13,20 +13,24 @@ public class Snake implements Runnable {
 
     private GlobalSettings settings = GlobalSettings.getInstance();
 
-    private int xDir, yDir, currentXDir, currentYDir, dotSizeWidth, dotSizeHeight, bodyCount = 380;
+    private int xDir, yDir, currentXDir, currentYDir, dotSizeWidth, dotSizeHeight, startDotWidth, startDotHeight, bodyCount = 5;
 
-    private int[] x, y;
+    private int[] x, y, startX, startY;
 
     @Override
     public void run() {
 	int dotCount = settings.getDotCount();
 	x = new int[dotCount * dotCount + 1];
-	y = new int[dotCount * dotCount + 1];
+	y = new int[x.length];
+	startX = new int[x.length];
+	startY = new int[x.length];
 
 	for (int i = 0; i < bodyCount; i++) {
-	    x[i] = settings.getWidth() / 2 + 1;
-	    y[i] = settings.getHeight() / 2 + 1;
+	    x[i] = settings.getWidth() / 2;
+	    y[i] = settings.getHeight() / 2;
 	}
+	
+	System.out.println(x[0] + " : " + settings.getDotSizeWidth());
 
 	int delay = settings.getDelay();
 	try {
@@ -42,16 +46,25 @@ public class Snake implements Runnable {
     }
 
     public void paint(Graphics graphics) {
-	dotSizeWidth = settings.getDotSizeWidth();
-	dotSizeHeight = settings.getDotSizeHeight();
+	if (x == null) {
+	    return;
+	}
 	graphics.setColor(Color.GREEN);
 	for (int i = 0; i < bodyCount; i++) {
-	    graphics.fillRect(x[i], y[i], dotSizeWidth - 1, dotSizeHeight - 1);
+	    graphics.fillRect(x[i], y[i], dotSizeWidth, dotSizeHeight);
 	}
     }
-    
+
     public void repaint() {
-	
+	if (dotSizeWidth != 0) {
+	    System.out.println("lol");
+	    for (int i = 0; i < x.length; i++) {
+		x[i] = startX[i] / startDotWidth * dotSizeWidth;
+		y[i] = startY[i] / startDotHeight * dotSizeHeight;
+	    }
+	}
+	dotSizeWidth = settings.getDotSizeWidth();
+	dotSizeHeight = settings.getDotSizeHeight();
     }
 
     public int[] getY() {
@@ -63,6 +76,10 @@ public class Snake implements Runnable {
     }
 
     public Point[] getPossiblePoints() {
+	if (x == null) {
+	    return null;
+	}
+
 	int dotHeight = settings.getDotSizeHeight();
 	int dotWidth = settings.getDotSizeWidth();
 	int dotCount = settings.getDotCount();
@@ -77,7 +94,7 @@ public class Snake implements Runnable {
 			isIn = true;
 		    }
 		}
-		if(!isIn) {
+		if (!isIn) {
 		    points.add(new Point(posX, posY));
 		}
 	    }
@@ -102,12 +119,17 @@ public class Snake implements Runnable {
     }
 
     private void move() {
+	startDotWidth = settings.getDotSizeWidth();
+	startDotHeight = settings.getDotSizeHeight();
 	Apple apple = settings.getApple();
 	int headX = x[0];
 	int headY = y[0];
 
+	// System.out.println(apple.x + " : " + headX);
+
 	// check for apple
-	if (apple.x == headX - 1 && apple.y == headY - 1) {
+	if (apple.x == headX && apple.y == headY) {
+	    System.out.println("INNN");
 	    bodyCount++;
 	    apple.setApple();
 	}
@@ -117,14 +139,18 @@ public class Snake implements Runnable {
 		&& (headX > 0 || xDir == 1) && (headX < settings.getWidth() || xDir == -1)) {
 	    x[0] = headX + dotSizeWidth * xDir;
 	    y[0] = headY + dotSizeHeight * yDir;
+	    startX[0] = x[0];
+	    startY[0] = y[0];
 	} else {
-	    //restartGame();
+	    restartGame();
 	}
 
 	// move snake
 	for (int i = bodyCount; i > 0; i--) {
 	    x[i] = x[i - 1];
 	    y[i] = y[i - 1];
+	    startX[i] = x[i];
+	    startY[i] = y[i];
 	}
 
 	// check for snake body

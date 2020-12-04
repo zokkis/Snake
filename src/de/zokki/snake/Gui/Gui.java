@@ -61,6 +61,10 @@ public class Gui extends JFrame {
 		} else if ((e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) && xDir != -1) {
 		    snake.setXDir(1);
 		    snake.setYDir(0);
+		} else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		    System.out.println("space");
+		    snake.setXDir(0);
+		    snake.setYDir(0);
 		}
 	    }
 	});
