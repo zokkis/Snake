@@ -37,8 +37,16 @@ public class Panel extends JPanel {
 	    public void componentResized(ComponentEvent e) {
 		int width = getWidth();
 		int height = getHeight();
-
+		
 		if (width != 0 && height != 0) {
+//		    int dotWidth = settings.getDotSizeWidth();
+//		    int dotHeight = settings.getDotSizeHeight();
+		    
+//		    width = Math.round(width / dotWidth) * dotWidth;
+//		    height = Math.round(height / dotHeight) * dotHeight;
+		    
+//		    setBounds(getX(), getY(), width, height);
+		    
 		    settings.setWidth(width);
 		    settings.setHeight(height);
 		    snake.repaint();

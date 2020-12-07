@@ -13,7 +13,7 @@ public class Snake implements Runnable {
 
     private GlobalSettings settings = GlobalSettings.getInstance();
 
-    private int xDir, yDir, currentXDir, currentYDir, dotSizeWidth, dotSizeHeight, startDotWidth, startDotHeight, bodyCount = 5;
+    private int xDir, yDir, currentXDir, currentYDir, dotSizeWidth, dotSizeHeight, bodyCount = 5;
 
     private int[] x, y, startX, startY;
 
@@ -29,8 +29,6 @@ public class Snake implements Runnable {
 	    x[i] = settings.getWidth() / 2;
 	    y[i] = settings.getHeight() / 2;
 	}
-	
-	System.out.println(x[0] + " : " + settings.getDotSizeWidth());
 
 	int delay = settings.getDelay();
 	try {
@@ -56,15 +54,14 @@ public class Snake implements Runnable {
     }
 
     public void repaint() {
-	if (dotSizeWidth != 0) {
-	    System.out.println("lol");
-	    for (int i = 0; i < x.length; i++) {
-		x[i] = startX[i] / startDotWidth * dotSizeWidth;
-		y[i] = startY[i] / startDotHeight * dotSizeHeight;
-	    }
-	}
 	dotSizeWidth = settings.getDotSizeWidth();
 	dotSizeHeight = settings.getDotSizeHeight();
+	if (dotSizeWidth != 0) {
+	    for (int i = 0; i < x.length; i++) {
+		x[i] = startX[i] * dotSizeWidth;
+		y[i] = startY[i] * dotSizeHeight;
+	    }
+	}
     }
 
     public int[] getY() {
@@ -119,17 +116,14 @@ public class Snake implements Runnable {
     }
 
     private void move() {
-	startDotWidth = settings.getDotSizeWidth();
-	startDotHeight = settings.getDotSizeHeight();
 	Apple apple = settings.getApple();
+	int dotWidth = settings.getDotSizeWidth();
+	int dotHeight = settings.getDotSizeHeight();
 	int headX = x[0];
 	int headY = y[0];
 
-	// System.out.println(apple.x + " : " + headX);
-
 	// check for apple
 	if (apple.x == headX && apple.y == headY) {
-	    System.out.println("INNN");
 	    bodyCount++;
 	    apple.setApple();
 	}
@@ -139,8 +133,8 @@ public class Snake implements Runnable {
 		&& (headX > 0 || xDir == 1) && (headX < settings.getWidth() || xDir == -1)) {
 	    x[0] = headX + dotSizeWidth * xDir;
 	    y[0] = headY + dotSizeHeight * yDir;
-	    startX[0] = x[0];
-	    startY[0] = y[0];
+	    startX[0] = x[0] / dotWidth;
+	    startY[0] = y[0] / dotHeight;
 	} else {
 	    restartGame();
 	}
@@ -149,8 +143,8 @@ public class Snake implements Runnable {
 	for (int i = bodyCount; i > 0; i--) {
 	    x[i] = x[i - 1];
 	    y[i] = y[i - 1];
-	    startX[i] = x[i];
-	    startY[i] = y[i];
+	    startX[i] = x[i] / dotWidth;
+	    startY[i] = y[i] / dotHeight;
 	}
 
 	// check for snake body
