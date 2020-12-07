@@ -129,7 +129,7 @@ public class Snake implements Runnable {
 	}
 
 	// check for borders
-	if ((headY > 0 || yDir == 1) && (headY < settings.getHeight() || yDir == -1) //
+	if ((headY + dotHeight > 0 || yDir == 1) && (headY < settings.getHeight() || yDir == -1) //
 		&& (headX > 0 || xDir == 1) && (headX < settings.getWidth() || xDir == -1)) {
 	    x[0] = headX + dotSizeWidth * xDir;
 	    y[0] = headY + dotSizeHeight * yDir;
